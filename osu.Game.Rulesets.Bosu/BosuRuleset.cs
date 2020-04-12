@@ -43,7 +43,9 @@ namespace osu.Game.Rulesets.Bosu
         {
             new KeyBinding(InputKey.Left, BosuAction.MoveLeft),
             new KeyBinding(InputKey.Right, BosuAction.MoveRight),
-            new KeyBinding(InputKey.Space, BosuAction.Jump),
+            new KeyBinding(InputKey.Up, BosuAction.Jump),
+            new KeyBinding(InputKey.Down, BosuAction.MoveDown),
+            new KeyBinding(InputKey.Space, BosuAction.Dash)
         };
 
         public override IEnumerable<Mod> ConvertFromLegacyMods(LegacyMods mods)
@@ -121,11 +123,11 @@ namespace osu.Game.Rulesets.Bosu
             }
         }
 
-        public override string Description => "bosu!";
+        public override string Description => "osu!JSaB";
 
-        public override string ShortName => "bosu!";
+        public override string ShortName => "osu!JSaB";
 
-        public override string PlayingVerb => "Avoiding apples";
+        public override string PlayingVerb => "Avoiding shapes";
 
         public override Drawable CreateIcon() => new Sprite
         {

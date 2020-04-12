@@ -14,7 +14,6 @@ namespace osu.Game.Rulesets.Bosu
         {
         }
     }
-
     public enum BosuAction
     {
         [Description("Move Left")]
@@ -23,7 +22,13 @@ namespace osu.Game.Rulesets.Bosu
         [Description("Move Right")]
         MoveRight,
 
-        [Description("Jump")]
-        Jump
+        [Description("Move Up")]
+        Jump,
+
+        [Description("Move Down")]
+        MoveDown,
+        [Description("Dash")]
+        Dash
     }
 }
+

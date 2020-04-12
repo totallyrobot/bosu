@@ -29,6 +29,9 @@ namespace osu.Game.Rulesets.Bosu.UI.Objects
         private readonly Bindable<PlayerModel> playerModel = new Bindable<PlayerModel>();
 
         private int horizontalDirection;
+        private int verticalDirection;
+
+        private bool isDashing;
         private Action jumpPressed;
         private Action jumpReleased;
         private int availableJumpCount = 2;
@@ -43,14 +46,14 @@ namespace osu.Game.Rulesets.Bosu.UI.Objects
             RelativeSizeAxes = Axes.Both;
             AddInternal(Player = new Container
             {
-                Origin = Anchor.BottomCentre,
+                Origin = Anchor.Centre,
                 RelativePositionAxes = Axes.Both,
                 Position = new Vector2(0.5f, 1),
                 Size = new Vector2(15),
                 Child = drawablePlayer = new Sprite
                 {
-                    Anchor = Anchor.BottomCentre,
-                    Origin = Anchor.BottomCentre,
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
                     RelativeSizeAxes = Axes.Both
                 }
             });
@@ -82,7 +85,7 @@ namespace osu.Game.Rulesets.Bosu.UI.Objects
                         return;
 
                     default:
-                        drawablePlayer.Texture = textures.Get("Player/bosu");
+                        drawablePlayer.Texture = textures.Get("Player/cyan");
                         return;
                 }
             }, true);
@@ -113,7 +116,15 @@ namespace osu.Game.Rulesets.Bosu.UI.Objects
                     return true;
 
                 case BosuAction.Jump:
-                    jumpPressed?.Invoke();
+                    verticalDirection--;
+                    return true;
+
+                case BosuAction.MoveDown:
+                    verticalDirection++;
+                    return true;
+
+                case BosuAction.Dash:
+                    isDashing = true;
                     return true;
             }
 
@@ -133,7 +144,15 @@ namespace osu.Game.Rulesets.Bosu.UI.Objects
                     return;
 
                 case BosuAction.Jump:
-                    jumpReleased?.Invoke();
+                    verticalDirection++;
+                    return;
+
+                case BosuAction.MoveDown:
+                    verticalDirection--;
+                    return;
+
+                case BosuAction.Dash:
+                    isDashing = false;
                     return;
             }
         }
@@ -170,6 +189,26 @@ namespace osu.Game.Rulesets.Bosu.UI.Objects
 
                 Player.X = (float)position;
             }
+
+                        if (verticalDirection != 0)
+            {
+                var position = Math.Clamp(Player.Y + Math.Sign(verticalDirection) * Clock.ElapsedFrameTime * base_speed, 0, 1);
+
+                Player.Scale = new Vector2(Math.Abs(Scale.Y) * (verticalDirection > 0 ? 1 : -1), Player.Scale.X);
+
+                if (position == Player.Y)
+                    return;
+
+                Player.Y = (float)position;
+            }
+
+        if (isDashing) {
+            Player.Y += 1f;
+            isDashing = false;
+            return;
+        }
+
+
         }
 
         private void onJumpPressed()
