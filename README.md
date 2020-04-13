@@ -1,2 +1,2 @@
-# bosu
-A custom game mode for osu!lazer project based on "I wanna be the Boshy" game.
+# JSaBosu
+A Just Shapes & Beats clone for osu!lazer
