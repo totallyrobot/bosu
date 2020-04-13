@@ -30,6 +30,8 @@ namespace osu.Game.Rulesets.Bosu.UI.Objects
 
         private int horizontalDirection;
         private int verticalDirection;
+        
+        private float dashDistance = 0.1f;
 
         private bool isDashing;
         private Action jumpPressed;
@@ -74,20 +76,10 @@ namespace osu.Game.Rulesets.Bosu.UI.Objects
 
             playerModel.BindValueChanged(model =>
             {
-                switch (model.NewValue)
-                {
-                    case PlayerModel.Boshy:
-                        drawablePlayer.Texture = textures.Get("Player/boshy");
-                        return;
-
-                    case PlayerModel.Kid:
-                        drawablePlayer.Texture = textures.Get("Player/kid");
-                        return;
-
-                    default:
+              
                         drawablePlayer.Texture = textures.Get("Player/cyan");
                         return;
-                }
+            
             }, true);
 
             jumpPressed += onJumpPressed;
@@ -164,20 +156,6 @@ namespace osu.Game.Rulesets.Bosu.UI.Objects
             base.Update();
 
             // Collided with the ground, reset jump logic
-            if (Player.Y > 1 || Player.Y < 0)
-            {
-                availableJumpCount = 2;
-                verticalSpeed = 0;
-                midAir = false;
-                Player.Y = 1;
-            }
-
-            if (midAir)
-            {
-                verticalSpeed -= (float)Clock.ElapsedFrameTime / 3.5f;
-                Player.Y -= (float)(Clock.ElapsedFrameTime * verticalSpeed * 0.00001);
-            }
-
             if (horizontalDirection != 0)
             {
                 var position = Math.Clamp(Player.X + Math.Sign(horizontalDirection) * Clock.ElapsedFrameTime * base_speed, 0, 1);
@@ -203,7 +181,18 @@ namespace osu.Game.Rulesets.Bosu.UI.Objects
             }
 
         if (isDashing) {
-            Player.Y += 1f;
+            if (verticalDirection == 1) {
+                Player.Y += dashDistance;
+            }
+            if (verticalDirection == -1) {
+                Player.Y -= dashDistance;
+            }
+            if (horizontalDirection == 1) {
+                Player.X += dashDistance;
+            }
+            if (horizontalDirection == -1) {
+                Player.X -= dashDistance;
+            }
             isDashing = false;
             return;
         }

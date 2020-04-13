@@ -7,7 +7,7 @@ namespace osu.Game.Rulesets.Bosu.UI
 {
     public class BosuSettingsSubsection : RulesetSettingsSubsection
     {
-        protected override string Header => "bosu!";
+        protected override string Header => "osu!JSaB";
 
         public BosuSettingsSubsection(Ruleset ruleset)
             : base(ruleset)
@@ -21,11 +21,6 @@ namespace osu.Game.Rulesets.Bosu.UI
 
             Children = new Drawable[]
             {
-                new SettingsEnumDropdown<PlayerModel>
-                {
-                    LabelText = "Player model",
-                    Bindable = config.GetBindable<PlayerModel>(BosuRulesetSetting.PlayerModel)
-                },
                 new SettingsEnumDropdown<BackgroundType>
                 {
                     LabelText = "Background type",

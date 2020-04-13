@@ -63,10 +63,9 @@ namespace osu.Game.Rulesets.Bosu.Objects.Drawables
         private void load(TextureStore textures)
         {
             sprite.Texture = textures.Get("cherry");
-            overlay.Texture = textures.Get("cherry-overlay");
-            branch.Texture = textures.Get("cherry-branch");
+            // overlay.Texture = textures.Get("cherry-overlay");
 
-            AccentColour.BindValueChanged(accent => sprite.Colour = accent.NewValue, true);
+            // AccentColour.BindValueChanged(accent => sprite.Colour = accent.NewValue, true);
         }
 
         protected override void UpdateInitialTransforms()
