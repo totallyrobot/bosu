@@ -30,7 +30,7 @@ namespace osu.Game.Rulesets.Bosu.UI.Objects
         
         private float dashDistance = 0.1f;
 
-        private bool isDashing;
+        public bool isDashing;
         public readonly Container Player;
         private readonly Sprite drawablePlayer;
 

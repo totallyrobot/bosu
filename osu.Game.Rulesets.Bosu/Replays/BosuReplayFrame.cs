@@ -9,45 +9,64 @@ namespace osu.Game.Rulesets.Bosu.Replays
     public class BosuReplayFrame : ReplayFrame, IConvertibleReplayFrame
     {
         public List<BosuAction> Actions = new List<BosuAction>();
-        public float Position;
-        public bool Jumping;
+        public float PositionX;
+        public float PositionY;
+        public bool Dashing;
 
         public BosuReplayFrame()
         {
         }
 
-        public BosuReplayFrame(double time, float? position = null, bool jumping = false, BosuReplayFrame lastFrame = null)
+        public BosuReplayFrame(double time, float? positionx = null, float? positiony = null, BosuReplayFrame lastFrame = null, bool dash = false)
             : base(time)
         {
-            Position = position ?? -100;
-            Jumping = jumping;
+            PositionX = positionx ?? -100;
+            PositionY = positiony ?? -100;
+            Dashing = dash;
 
-            if (Jumping)
-                Actions.Add(BosuAction.Jump);
 
             if (lastFrame != null)
             {
-                if (Position > lastFrame.Position)
+                if (PositionX > lastFrame.PositionX) 
                     lastFrame.Actions.Add(BosuAction.MoveRight);
-                else if (Position < lastFrame.Position)
+                else if (PositionX < lastFrame.PositionX) 
                     lastFrame.Actions.Add(BosuAction.MoveLeft);
+                
+                if (PositionY < lastFrame.PositionY)
+                    lastFrame.Actions.Add(BosuAction.Jump);
+                else if (PositionY > lastFrame.PositionY)
+                    lastFrame.Actions.Add(BosuAction.MoveDown);
+                
+                if (Dashing)
+                    lastFrame.Actions.Add(BosuAction.Dash);
             }
         }
 
         public void FromLegacy(LegacyReplayFrame currentFrame, IBeatmap beatmap, ReplayFrame lastFrame = null)
         {
-            Position = currentFrame.Position.X;
-            Jumping = currentFrame.ButtonState == ReplayButtonState.Left1;
-
-            if (Jumping)
-                Actions.Add(BosuAction.Jump);
+            PositionX = currentFrame.Position.X;
+            PositionY = currentFrame.Position.Y;
 
             if (lastFrame is BosuReplayFrame lastBosuFrame)
             {
-                if (Position > lastBosuFrame.Position)
+                if (PositionX > lastBosuFrame.PositionX)
                     lastBosuFrame.Actions.Add(BosuAction.MoveRight);
-                else if (Position < lastBosuFrame.Position)
+                else if (PositionX < lastBosuFrame.PositionX)
                     Actions.Add(BosuAction.MoveLeft);
+                
+                if (PositionY < lastBosuFrame.PositionY)
+                    lastBosuFrame.Actions.Add(BosuAction.Jump);
+                else if (PositionY > lastBosuFrame.PositionY)
+                    Actions.Add(BosuAction.MoveDown);
+
+                if ((PositionX - lastBosuFrame.PositionX) == 100)
+                    Actions.Add(BosuAction.Dash);
+                else if ((PositionX - lastBosuFrame.PositionX) == -100)
+                    lastBosuFrame.Actions.Add(BosuAction.Dash);
+                else if ((PositionY - lastBosuFrame.PositionY) == 100)
+                    Actions.Add(BosuAction.Dash);
+                else if ((PositionY - lastBosuFrame.PositionY) == -100)
+                    lastBosuFrame.Actions.Add(BosuAction.Dash);
             }
         }
 
@@ -57,7 +76,7 @@ namespace osu.Game.Rulesets.Bosu.Replays
 
             if (Actions.Contains(BosuAction.Jump)) state |= ReplayButtonState.Left1;
 
-            return new LegacyReplayFrame(Time, Position, null, state);
+            return new LegacyReplayFrame(Time, PositionX, PositionY * 2, state);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Bosu.Replays
                 if (frame == null)
                     return null;
 
-                return NextFrame != null ? Interpolation.ValueAt(CurrentTime.Value, frame.Position, NextFrame.Position, frame.Time, NextFrame.Time) : frame.Position;
+                return NextFrame != null ? Interpolation.ValueAt(CurrentTime.Value, frame.PositionX, NextFrame.PositionX, frame.Time, NextFrame.Time) : frame.PositionX;
             }
         }
 
