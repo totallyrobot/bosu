@@ -23,9 +23,6 @@ namespace osu.Game.Rulesets.Bosu.UI.Objects
         [Resolved]
         private TextureStore textures { get; set; }
 
-        private SampleChannel jump;
-        private SampleChannel doubleJump;
-
         private readonly Bindable<PlayerModel> playerModel = new Bindable<PlayerModel>();
 
         private int horizontalDirection;
@@ -34,12 +31,6 @@ namespace osu.Game.Rulesets.Bosu.UI.Objects
         private float dashDistance = 0.1f;
 
         private bool isDashing;
-        private Action jumpPressed;
-        private Action jumpReleased;
-        private int availableJumpCount = 2;
-        private float verticalSpeed;
-        private bool midAir;
-
         public readonly Container Player;
         private readonly Sprite drawablePlayer;
 
@@ -66,8 +57,6 @@ namespace osu.Game.Rulesets.Bosu.UI.Objects
         {
             config.BindWith(BosuRulesetSetting.PlayerModel, playerModel);
 
-            jump = samples.Get("jump");
-            doubleJump = samples.Get("double-jump");
         }
 
         protected override void LoadComplete()
@@ -82,8 +71,6 @@ namespace osu.Game.Rulesets.Bosu.UI.Objects
             
             }, true);
 
-            jumpPressed += onJumpPressed;
-            jumpReleased += onJumpReleased;
         }
 
         public Vector2 PlayerPositionInPlayfieldSpace() => Player.Position * BosuPlayfield.BASE_SIZE;
@@ -155,9 +142,7 @@ namespace osu.Game.Rulesets.Bosu.UI.Objects
 
             base.Update();
 
-            // Collided with the ground, reset jump logic
-            if (horizontalDirection != 0)
-            {
+            if (horizontalDirection != 0) {
                 var position = Math.Clamp(Player.X + Math.Sign(horizontalDirection) * Clock.ElapsedFrameTime * base_speed, 0, 1);
 
                 Player.Scale = new Vector2(Math.Abs(Scale.X) * (horizontalDirection > 0 ? 1 : -1), Player.Scale.Y);
@@ -168,8 +153,7 @@ namespace osu.Game.Rulesets.Bosu.UI.Objects
                 Player.X = (float)position;
             }
 
-                        if (verticalDirection != 0)
-            {
+            if (verticalDirection != 0) {
                 var position = Math.Clamp(Player.Y + Math.Sign(verticalDirection) * Clock.ElapsedFrameTime * base_speed, 0, 1);
 
                 Player.Scale = new Vector2(Math.Abs(Scale.Y) * (verticalDirection > 0 ? 1 : -1), Player.Scale.X);
@@ -197,40 +181,7 @@ namespace osu.Game.Rulesets.Bosu.UI.Objects
             return;
         }
 
-
         }
-
-        private void onJumpPressed()
-        {
-            if (availableJumpCount == 0)
-                return;
-
-            midAir = true;
-
-            availableJumpCount--;
-
-            switch (availableJumpCount)
-            {
-                case 1:
-                    jump?.Play();
-                    verticalSpeed = 100;
-                    break;
-
-                case 0:
-                    doubleJump?.Play();
-                    verticalSpeed = 90;
-                    break;
-            }
-        }
-
-        private void onJumpReleased()
-        {
-            if (verticalSpeed < 0)
-                return;
-
-            verticalSpeed /= 2;
-        }
-
         private void updateReplayState()
         {
             var state = (GetContainingInputManager().CurrentState as RulesetInputManagerInputState<BosuAction>)?.LastReplayState as BosuFramedReplayInputHandler.BosuReplayState ?? null;
